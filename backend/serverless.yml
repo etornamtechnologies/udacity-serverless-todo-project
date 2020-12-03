@@ -4,8 +4,8 @@ service:
 plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
-  - serverless-reqvalidator-plugin
   - serverless-plugin-tracing
+  - serverless-reqvalidator-plugin
 
 package: 
   individually: true
@@ -35,12 +35,12 @@ provider:
     apiGateway: true
 
   environment:
+    JWKS_URL: https://dev-b7rcqjet.us.auth0.com/.well-known/jwks.json
     TODOS_TABLE: todos-${self:provider.stage}
     USER_ID_INDEX: todos-index-${self:provider.environment.TODOS_TABLE}
     TODOS_S3_BUCKET: udacity-svl-todos-attachment-etor-${self:provider.stage}
     S3_SIGNATURE_VERSION: v4
     SIGNED_URL_EXPIRATION: 300
-    JWKS_URL: https://dev-b7rcqjet.us.auth0.com/.well-known/jwks.json
 
   
 functions:
@@ -66,8 +66,8 @@ functions:
       Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}/index/${self:provider.environment.USER_ID_INDEX}
     - Effect: Allow
       Action: 
-        - xray:PutTraceSegments
         - xray:PutTelemetryRecords
+        - xray:PutTraceSegments
       Resource: 
         - '*'
     - Effect: Allow
