@@ -17,7 +17,18 @@ export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     logger.info('In Create Todo Handler')
     const createTodoRequest: CreateTodoRequest = JSON.parse(event.body)
-
+    if(!createTodoRequest.name) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({message: 'Name field required!'})
+      }
+    } else if(!createTodoRequest.dueDate) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({message: 'Due date field required!'})
+      }
+    }
+    
     try {
       const jwtToken: string = getToken(event.headers.Authorization)
       const createTodoResponse: TodoItem = await createTodo(createTodoRequest, jwtToken)

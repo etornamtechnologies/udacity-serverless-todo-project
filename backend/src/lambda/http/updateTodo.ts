@@ -20,6 +20,18 @@ export const handler = middy(
     const todoId = event.pathParameters.todoId
     const updateTodoRequest: UpdateTodoRequest = JSON.parse(event.body)
 
+    //lets validate request body
+    let errMsg = null;
+    if(!updateTodoRequest.name) errMsg = 'Name field required!'
+    if(!updateTodoRequest.dueDate) errMsg = 'Due date field required!'
+    if(updateTodoRequest.done == undefined) errMsg = 'Done filed require!'
+    if(errMsg) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({message: errMsg})
+      }
+    }
+
     try {
       const jwtToken: string = getToken(event.headers.Authorization)
       const updatedTodo: TodoItem = await updateTodoItem(jwtToken, todoId, updateTodoRequest)
